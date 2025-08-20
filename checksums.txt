@@ -1,0 +1,2 @@
+# Paste SHA-256 checksums below (one per file). Example format (generated 2025-08-19)
+# e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  RapidNow.apk

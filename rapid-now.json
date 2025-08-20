@@ -1,0 +1,9 @@
+{
+  "app": "rapid-now",
+  "platform": "android",
+  "version": "1.0.0",
+  "build": 1,
+  "notes": "Initial public release.",
+  "url": "https://RapidNow.com/RapidNow.apk",
+  "minSdk": 21
+}
