@@ -1,27 +1,309 @@
-## Rapid Now 1.0.0
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>App Hub — Direct Downloads</title>
+  <meta name="description" content="App Hub: Direct downloads for Android and Windows apps. Simple, private, and fast." />
+  <style>
+    /* ---------- Theme ---------- */
+    :root{
+      --bg:#0b1020; --bg-2:#0f172a;
+      --card:#0c1324; --card-2:#0b1220;
+      --border:#1e2b43; --muted:#9aa4b2;
+      --text:#e7ebf1; --sub:#c6ccd6;
+      --accent:#22c55e; --accent-ink:#052e16;
+      --ring:#2dd4bf;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:16px
+    }
 
-First public release of **Rapid Now** — a one-tap emergency app.
+    /* ---------- Base ---------- */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--text);
+      font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      background:
+        radial-gradient(1200px 800px at 80% -10%, #1f2937 0%, transparent 60%),
+        radial-gradient(1000px 600px at -10% 20%, #111827 0%, transparent 55%),
+        linear-gradient(180deg,var(--bg),var(--bg-2));
+    }
+    img{max-width:100%;height:auto;display:block}
+    a{color:inherit;text-decoration:none}
+    .container{max-width:1000px;margin:0 auto;padding:24px}
 
-### Highlights
-- **SOS in one tap:** Call, SMS, or open WhatsApp to your chosen contact.
-- **Live GPS (opt-in):** Adds a Google Maps link *only* if you grant location permission.
-- **Private by design:** No ads, no analytics, no third-party trackers.
-- **Works offline:** Calls/SMS without internet (WhatsApp needs internet).
+    /* ---------- Header ---------- */
+    header{
+      position:sticky; top:0; z-index:10;
+      backdrop-filter:saturate(130%) blur(10px);
+      background:linear-gradient(180deg,rgba(11,16,32,.8),rgba(11,16,32,.55));
+      border-bottom:1px solid var(--border)
+    }
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:40px;height:40px;border-radius:12px;
+      background:linear-gradient(180deg,#0f172a,#111827);
+      border:1px solid #243048; display:grid; place-items:center;
+      font-weight:800; letter-spacing:.5px
+    }
+    .links{display:flex;gap:14px}
+    .links a{color:var(--sub);font-size:14px;opacity:.9}
+    .links a:hover{opacity:1}
+    .btn{
+      display:inline-flex;align-items:center;gap:8px;
+      background:var(--accent); color:var(--accent-ink);
+      padding:10px 14px;border-radius:10px;border:0; cursor:pointer;
+      font-weight:700; box-shadow:0 6px 20px rgba(34,197,94,.25);
+      transition: transform .12s ease, box-shadow .2s ease
+    }
+    .btn:focus-visible{outline:2px solid var(--ring); outline-offset:2px}
+    .btn:hover{transform:translateY(-1px); box-shadow:0 10px 24px rgba(34,197,94,.28)}
+    .btn.secondary{
+      background:#0f172a;color:#e5e7eb;border:1px solid #223047;
+      box-shadow:none
+    }
 
-### Permissions (all optional)
-- **Location (precise):** Only to include a link in your SOS message. No background tracking.
-- **Phone / Call:** Place an emergency call directly.
-- **SMS:** Send an SOS text automatically (or we pre-fill your SMS app).
-- **Contacts:** Pick a contact from your address book (you can also enter numbers manually).
+    /* ---------- Hero ---------- */
+    .hero{padding:42px 0 18px}
+    .hero h1{
+      margin:0; font-size:clamp(28px,3.8vw,40px); line-height:1.15; letter-spacing:.2px
+    }
+    .hero p{color:var(--sub);margin:.5rem 0 0}
 
-### Install
-1. Download the APK from **Assets** below.
-2. Open it and allow your browser to install “unknown apps” if prompted.
-3. Tap **Install**.
+    /* ---------- Cards / Grid ---------- */
+    .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));margin-top:16px}
+    .card{
+      background:linear-gradient(180deg,var(--card),var(--card-2));
+      border:1px solid var(--border); border-radius:var(--radius); padding:18px;
+      box-shadow:var(--shadow)
+    }
+    .meta{display:flex;justify-content:space-between;align-items:center;color:#a0aabd;font-size:12px}
+    .card h3{margin:8px 0 6px;font-size:20px}
+    .notice{color:var(--muted);font-size:14px}
 
-### Verify (optional)
-SHA-256: `339F7A6EF380825DEA54B3AED887EBD768B95CB2C9308653453C124E8AF1DADA`
+    /* ---------- Collapsible blocks ---------- */
+    details.reveal, details.collapsible{margin-top:14px}
+    details.reveal > summary, details.collapsible > summary{
+      list-style:none; cursor:pointer; user-select:none;
+      display:inline-flex; align-items:center; gap:8px;
+      background:#0f172a; color:#e5e7eb; border:1px solid #223047;
+      padding:10px 14px; border-radius:10px; font-weight:700
+    }
+    details.reveal > summary::-webkit-details-marker,
+    details.collapsible > summary::-webkit-details-marker{display:none}
+    .chev{transition:transform .2s ease; display:inline-block}
+    details[open] .chev{transform:rotate(180deg)}
 
----
+    /* Smooth content reveal */
+    .reveal .content{overflow:hidden; max-height:0; transition:max-height .35s ease;}
+    details.reveal[open] .content{max-height:1400px}
 
-Questions or feedback? **apphub@yahoo.com**
+    .panel{
+      background:#0d1424; border:1px solid var(--border);
+      border-radius:var(--radius); padding:16px; margin-top:16px
+    }
+
+    footer{border-top:1px solid var(--border);margin-top:36px;padding:24px 0;color:var(--muted);font-size:14px}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+
+    /* ---------- Download counter badge ---------- */
+    .badge{
+      display:inline-flex; align-items:center; gap:6px;
+      background:#0f172a; color:#e5e7eb; border:1px solid #223047;
+      padding:6px 10px; border-radius:999px; font-size:12px; margin-top:8px
+    }
+    .badge dot{width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo">A</div>
+        <div>
+          <div style="font-weight:800">App Hub</div>
+          <div style="font-size:12px;color:#a3e2b3">Direct downloads</div>
+        </div>
+      </div>
+      <nav class="links">
+        <a href="#apps">Apps</a>
+        <a href="#privacy">Privacy</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <a class="btn" href="#apps">Download</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Hero -->
+    <section class="hero">
+      <h1>Private, simple app downloads.</h1>
+      <p>One page. No ads. No tracking. Your choice, your control.</p>
+    </section>
+
+    <!-- Apps -->
+    <section id="apps" aria-labelledby="apps-title">
+      <h2 id="apps-title" class="sr-only">Downloads</h2>
+
+      <div class="grid">
+        <!-- Rapid Now -->
+        <article class="card">
+          <div class="meta"><span>Android</span><span>v1.0.0</span></div>
+          <h3>Rapid Now</h3>
+          <p class="notice">One-tap SOS: call, SMS, or WhatsApp your emergency contact with live GPS (only if you allow it).</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+            <!-- KEEP: your working download link -->
+            <a class="btn" href="./RapidNow.apk?v=1" download>Download APK</a>
+          </div>
+          <!-- Live download counter (reads GitHub Release asset count) -->
+          <div class="badge" aria-live="polite"><dot></dot> Downloads: <span id="dl-count">—</span></div>
+
+          <!-- Learn more -->
+          <details class="reveal" id="rapidnow" style="margin-top:12px">
+            <summary><span class="chev">▾</span> Learn more</summary>
+            <div class="content">
+              <div class="panel" style="margin-top:12px">
+                <p class="notice" style="margin:0 0 10px 0">Everything you need to know before installing.</p>
+
+                <h3 style="margin:10px 0 6px 0;font-size:16px">Overview</h3>
+                <ul class="notice">
+                  <li><strong>Emergency first:</strong> set one or more contacts and trigger SOS fast.</li>
+                  <li><strong>One-tap actions:</strong> call, SMS, or open WhatsApp with a pre-filled message.</li>
+                  <li><strong>Live GPS (opt-in):</strong> adds a Google Maps link if you grant location permission.</li>
+                  <li><strong>Private:</strong> no ads, analytics, or trackers. Data stays on your device.</li>
+                  <li><strong>Works offline:</strong> calls/SMS work without internet; WhatsApp needs internet.</li>
+                </ul>
+
+                <h3 style="margin:12px 0 6px 0;font-size:16px">Screenshots</h3>
+                <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-top:8px">
+                  <img src="assets/rapidnow-1.png?v=1" alt="Rapid Now screenshot 1" style="border-radius:12px;border:1px solid #223047">
+                  <img src="assets/rapidnow-2.png?v=1" alt="Rapid Now screenshot 2" style="border-radius:12px;border:1px solid #223047">
+                </div>
+
+                <h3 style="margin:12px 0 6px 0;font-size:16px">Install</h3>
+                <ol class="notice">
+                  <li>Tap <strong>Download APK</strong> above.</li>
+                  <li>Open the file; allow your browser to install “unknown apps” if asked.</li>
+                  <li>Tap <strong>Install</strong>.</li>
+                </ol>
+
+                <h3 style="margin:12px 0 6px 0;font-size:16px">Verify (optional)</h3>
+                <p class="notice">SHA-256: <code>339F7A6EF380825DEA54B3AED887EBD768B95CB2C9308653453C124E8AF1DADA</code></p>
+
+                <h3 style="margin:12px 0 6px 0;font-size:16px">What’s new</h3>
+                <ul class="notice"><li><strong>v1.0.0</strong> — Initial public release.</li></ul>
+
+                <h3 style="margin:12px 0 6px 0;font-size:16px">For parents & guardians</h3>
+                <p class="notice">Friendly, but not recommended for users under 18. Please supervise any use by minors.</p>
+
+                <h3 style="margin:12px 0 6px 0;font-size:16px">Support</h3>
+                <p class="notice">Questions or feedback? Email <a href="mailto:apphub@yahoo.com">apphub@yahoo.com</a>.</p>
+
+                <p class="notice" style="margin-top:8px"><em>Safety note:</em> Rapid Now helps you contact someone quickly. It does not replace emergency services.</p>
+              </div>
+            </div>
+          </details>
+        </article>
+      </div>
+
+      <div class="panel" role="note" style="margin-top:18px">
+        <strong>Tip:</strong> Android may show “Install from unknown sources”. Enable once for your browser/installer, then install.
+      </div>
+    </section>
+
+    <!-- Privacy (collapsed) -->
+    <section class="panel" style="margin-top:22px">
+      <details class="reveal" id="privacy">
+        <summary><span class="chev">▾</span> Privacy & Data Choices</summary>
+        <div class="content">
+          <div style="margin-top:12px">
+            <p class="notice" style="margin:0 0 10px 0">Last updated: August 19, 2025</p>
+            <p><strong>Your choice. Your control.</strong> Our apps do not collect or monitor your personal data. No ads. No analytics. No third-party trackers.</p>
+
+            <h3 style="margin:16px 0 6px 0;font-size:16px">Location (GPS) — opt-in only</h3>
+            <ul class="notice">
+              <li>Requested only when a feature needs it (e.g., SOS location link).</li>
+              <li>Denying permission keeps the app working (without location features).</li>
+              <li>We don’t store or share your location; no background tracking.</li>
+            </ul>
+
+            <h3 style="margin:16px 0 6px 0;font-size:16px">Other permissions</h3>
+            <ul class="notice">
+              <li>Phone/Call, SMS, Contacts, Notifications — only for the features you use.</li>
+              <li>Requested at runtime; your choice every time.</li>
+            </ul>
+
+            <h3 style="margin:16px 0 6px 0;font-size:16px">Data</h3>
+            <ul class="notice">
+              <li><strong>Website:</strong> No cookies. Our host may keep short server logs for reliability/security.</li>
+              <li><strong>Apps:</strong> Messages and calls go from your device to your contacts — not to us.</li>
+              <li><strong>Email support:</strong> We keep only what you send us; delete on request.</li>
+            </ul>
+
+            <h3 style="margin:16px 0 6px 0;font-size:16px">Minors</h3>
+            <p class="notice">Not recommended under 18. Parents/guardians should supervise any use.</p>
+
+            <h3 style="margin:16px 0 6px 0;font-size:16px">Contact</h3>
+            <p class="notice">Questions or deletion requests? <a href="mailto:apphub@yahoo.com">apphub@yahoo.com</a>.</p>
+
+            <p class="notice" style="margin-top:12px"><em>Note:</em> Simple policy for a no-tracking site; not legal advice.</p>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="panel" aria-labelledby="contact-title" style="margin-top:22px">
+      <h2 id="contact-title" class="sr-only">Contact</h2>
+      <p class="notice">Email: <a href="mailto:apphub@yahoo.com">apphub@yahoo.com</a></p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div>© <span id="year"></span> App Hub. All rights reserved.</div>
+      <div>Contact: <a href="mailto:apphub@yahoo.com">apphub@yahoo.com</a> · <a href="#privacy">Privacy</a></div>
+    </div>
+  </footer>
+
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Open details automatically when navigating with a hash (#rapidnow or #privacy)
+    function openDetailsFromHash() {
+      const id = location.hash.replace('#','');
+      if (!id) return;
+      const d = document.getElementById(id);
+      if (d && d.tagName.toLowerCase()==='details' && !d.open) d.open = true;
+      if (d) d.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+    window.addEventListener('hashchange', openDetailsFromHash);
+    openDetailsFromHash();
+
+    // ---- Download counter: reads GitHub Releases asset count ----
+    (async function () {
+      const owner = "apphub33";
+      const repo  = "app-hub";
+      const assetName = "RapidNow.apk";
+      try {
+        const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/latest`, {
+          headers: { "Accept": "application/vnd.github+json" }
+        });
+        if (!res.ok) throw new Error("GitHub API error");
+        const data = await res.json();
+        const asset = (data.assets || []).find(a => a.name === assetName);
+        if (asset && typeof asset.download_count === "number") {
+          const el = document.getElementById("dl-count");
+          if (el) el.textContent = asset.download_count.toLocaleString();
+        }
+      } catch (e) {
+        // If no release yet or API blocked, keep the badge as "—"
+      }
+    })();
+  </script>
+</body>
+</html>
