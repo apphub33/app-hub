@@ -44,6 +44,16 @@
 
     /* Simple screenshots grid inside details */
     .shots { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-top:8px }
+
+    /* Collapsible “More apps” (hidden until you add another app) */
+    details.collapsible { margin-top:16px; }
+    details.collapsible > summary {
+      list-style:none; user-select:none; display:inline-flex; align-items:center; gap:8px;
+      background:#111827; color:#e5e7eb; border:1px solid #2a3344; padding:10px 14px; border-radius:10px; font-weight:600
+    }
+    details.collapsible > summary::-webkit-details-marker { display:none }
+    details.collapsible > summary::after { content:"▾"; font-size:12px }
+    details.collapsible[open] > summary::after { content:"▴" }
   </style>
 </head>
 <body>
@@ -58,7 +68,6 @@
       </div>
       <nav class="links">
         <a href="#apps">Apps</a>
-        <a href="#rapidnow">Rapid Now</a>
         <a href="#privacy">Privacy</a>
         <a href="#contact">Contact</a>
       </nav>
@@ -73,12 +82,12 @@
       <p class="notice">Private downloads for our Android and Windows tools. No ads. No tracking. Your choice, your control.</p>
     </section>
 
-    <!-- APPS -->
+    <!-- APPS (only Rapid Now is visible initially) -->
     <section id="apps" aria-labelledby="apps-title">
       <h2 id="apps-title" class="sr-only">Downloads</h2>
 
-      <!-- Rapid Now card (visible immediately) -->
       <div class="grid">
+        <!-- RAPID NOW CARD -->
         <article class="card">
           <div class="meta"><span>Android</span><span>v1.0.0</span></div>
           <h3>Rapid Now</h3>
@@ -88,7 +97,7 @@
             <a class="btn" href="./RapidNow.apk?v=1" download>Download APK</a>
           </div>
 
-          <!-- Learn more: collapsible details block -->
+          <!-- Learn more (drops down the rest) -->
           <details class="reveal" id="rapidnow">
             <summary>Learn more</summary>
             <div class="panel" style="margin-top:12px">
@@ -97,7 +106,7 @@
               <h3 style="margin:10px 0 6px 0;font-size:16px">Overview</h3>
               <ul class="notice">
                 <li><strong>Emergency first:</strong> Set one or more emergency contacts and trigger an SOS fast.</li>
-                <li><strong>One-tap actions:</strong> Place a call, send an SMS, or open WhatsApp with a pre-filled message.</li>
+                <li><strong>One-tap actions:</strong> Call, SMS, or open WhatsApp with a pre-filled message.</li>
                 <li><strong>Live GPS (opt-in):</strong> When permitted, attaches your coordinates to your SOS message (e.g., Google Maps link).</li>
                 <li><strong>Privacy:</strong> No ads, analytics, or third-party trackers. Your data stays on your device.</li>
                 <li><strong>Works offline:</strong> Calls/SMS work without internet; WhatsApp needs internet.</li>
@@ -111,7 +120,7 @@
 
               <h3 style="margin:12px 0 6px 0;font-size:16px">Permissions</h3>
               <ul class="notice">
-                <li><strong>Location (precise GPS)</strong> — optional; used only to include a location link in your SOS. No background tracking.</li>
+                <li><strong>Location (precise GPS)</strong> — optional; only to include a location link in your SOS. No background tracking.</li>
                 <li><strong>Phone / Call</strong> — optional; place an emergency call directly.</li>
                 <li><strong>SMS</strong> — optional; send SOS texts automatically (else we open your SMS app pre-filled).</li>
                 <li><strong>Contacts</strong> — optional; pick a contact from your address book (or enter numbers manually).</li>
@@ -141,6 +150,47 @@
           </details>
         </article>
       </div>
+
+      <!-- HIDDEN “More apps” area — enable when you add a 2nd app.
+           To enable: remove the word `hidden` from the <details> tag below,
+           then duplicate & edit the TEMPLATE CARD inside.
+      -->
+      <details class="collapsible" id="more-apps" hidden>
+        <summary>Show more apps</summary>
+        <div class="grid" style="margin-top:12px">
+          <!-- ======================= TEMPLATE CARD (copy for each new app) =======================
+          <article class="card" id="newapp">
+            <div class="meta"><span>Android</span><span>v1.0.0</span></div>
+            <h3>New App Name</h3>
+            <p class="notice">Short one-line description of your app.</p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap">
+              <a class="btn" href="./NewApp.apk" download>Download APK</a>
+              <a class="btn secondary" href="#newapp-details">Learn more</a>
+            </div>
+
+            <details class="reveal" id="newapp-details">
+              <summary>Learn more</summary>
+              <div class="panel" style="margin-top:12px">
+                <h3 style="margin:10px 0 6px 0;font-size:16px">Overview</h3>
+                <ul class="notice">
+                  <li>What it does in one or two lines.</li>
+                  <li>Key features or unique benefit.</li>
+                </ul>
+
+                <h3 style="margin:12px 0 6px 0;font-size:16px">Screenshots</h3>
+                <div class="shots">
+                  <img src="assets/newapp-1.png" alt="New App screenshot 1" style="border-radius:12px;border:1px solid #223047">
+                  <img src="assets/newapp-2.png" alt="New App screenshot 2" style="border-radius:12px;border:1px solid #223047">
+                </div>
+
+                <h3 style="margin:12px 0 6px 0;font-size:16px">How to install</h3>
+                <ol class="notice"><li>Tap Download APK.</li><li>Allow unknown apps if prompted.</li><li>Install.</li></ol>
+              </div>
+            </details>
+          </article>
+          ================================================================================================== -->
+        </div>
+      </details>
 
       <div class="panel" role="note" style="margin-top:16px">
         <strong>Tip:</strong> Android may show “Install from unknown sources”. Enable once for your browser/installer, then install.
@@ -208,8 +258,7 @@
     // Year
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // If user clicks the "Rapid Now" link in the header (/#rapidnow),
-    // auto-open the details block so info is visible.
+    // If someone opens /#rapidnow, auto-open the details block so info is visible.
     function openDetailsFromHash() {
       if (location.hash === '#rapidnow') {
         const d = document.getElementById('rapidnow');
