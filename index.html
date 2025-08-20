@@ -10,6 +10,7 @@
     * { box-sizing:border-box }
     body { margin:0; background:linear-gradient(180deg,#0f172a,#111827); color:var(--text); font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
     a { color:inherit; text-decoration:none }
+    img { max-width:100%; height:auto }
     .container { max-width:960px; margin:0 auto; padding:24px }
     header { position:sticky; top:0; background:rgba(17,24,39,.7); backdrop-filter:blur(8px); border-bottom:1px solid #263142; z-index:10 }
     .nav { display:flex; align-items:center; justify-content:space-between; padding:12px 0 }
@@ -29,18 +30,20 @@
     .panel { background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:16px; margin-top:20px }
     footer { border-top:1px solid var(--border); margin-top:36px; padding:24px 0; color:var(--muted); font-size:14px }
     .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0 }
-    details { background:#0b1220; border:1px solid var(--border); border-radius:12px; padding:12px 14px; margin-top:8px }
-    details > summary { cursor:pointer; font-weight:600 }
 
-    /* Collapsible "More apps" button (hidden until you add more apps; see instructions below) */
-    details.collapsible { margin-top:16px; }
-    details.collapsible > summary {
-      list-style: none; user-select: none; display: inline-flex; align-items: center; gap: 8px;
-      background:#111827; color:#e5e7eb; border:1px solid #2a3344; padding:10px 14px; border-radius:10px; font-weight:600
+    /* Collapsible “Learn more” styled like a button */
+    details.reveal { margin-top:14px; }
+    details.reveal > summary {
+      list-style:none; cursor:pointer; user-select:none;
+      display:inline-flex; align-items:center; gap:8px;
+      background:#111827; color:#e5e7eb; border:1px solid #2a3344;
+      padding:10px 14px; border-radius:10px; font-weight:600;
     }
-    details.collapsible > summary::-webkit-details-marker { display:none }
-    details.collapsible > summary::after { content:"▾"; font-size:12px }
-    details.collapsible[open] > summary::after { content:"▴" }
+    details.reveal > summary::-webkit-details-marker { display:none }
+    details.reveal[open] > summary::after { content:" (hide)"; font-weight:400; font-size:12px; color:var(--muted) }
+
+    /* Simple screenshots grid inside details */
+    .shots { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-top:8px }
   </style>
 </head>
 <body>
@@ -74,127 +77,86 @@
     <section id="apps" aria-labelledby="apps-title">
       <h2 id="apps-title" class="sr-only">Downloads</h2>
 
-      <!-- Current apps (always visible) -->
+      <!-- Rapid Now card (visible immediately) -->
       <div class="grid">
-        <!-- APP: RAPID NOW -->
         <article class="card">
           <div class="meta"><span>Android</span><span>v1.0.0</span></div>
           <h3>Rapid Now</h3>
           <p class="notice">One-tap SOS: call, SMS, or WhatsApp your emergency contact with your live GPS location (with permission).</p>
           <div style="display:flex; gap:8px; flex-wrap:wrap">
-            <!-- keep this link — it works -->
+            <!-- keep this EXACT link; it works -->
             <a class="btn" href="./RapidNow.apk?v=1" download>Download APK</a>
-            <a class="btn secondary" href="#rapidnow">Learn more</a>
           </div>
+
+          <!-- Learn more: collapsible details block -->
+          <details class="reveal" id="rapidnow">
+            <summary>Learn more</summary>
+            <div class="panel" style="margin-top:12px">
+              <p class="notice" style="margin:0 0 10px 0">Everything you need to know before installing.</p>
+
+              <h3 style="margin:10px 0 6px 0;font-size:16px">Overview</h3>
+              <ul class="notice">
+                <li><strong>Emergency first:</strong> Set one or more emergency contacts and trigger an SOS fast.</li>
+                <li><strong>One-tap actions:</strong> Place a call, send an SMS, or open WhatsApp with a pre-filled message.</li>
+                <li><strong>Live GPS (opt-in):</strong> When permitted, attaches your coordinates to your SOS message (e.g., Google Maps link).</li>
+                <li><strong>Privacy:</strong> No ads, analytics, or third-party trackers. Your data stays on your device.</li>
+                <li><strong>Works offline:</strong> Calls/SMS work without internet; WhatsApp needs internet.</li>
+              </ul>
+
+              <h3 style="margin:12px 0 6px 0;font-size:16px">Screenshots</h3>
+              <div class="shots">
+                <img src="assets/rapidnow-1.png?v=1" alt="Rapid Now screenshot 1" style="border-radius:12px;border:1px solid #223047">
+                <img src="assets/rapidnow-2.png?v=1" alt="Rapid Now screenshot 2" style="border-radius:12px;border:1px solid #223047">
+              </div>
+
+              <h3 style="margin:12px 0 6px 0;font-size:16px">Permissions</h3>
+              <ul class="notice">
+                <li><strong>Location (precise GPS)</strong> — optional; used only to include a location link in your SOS. No background tracking.</li>
+                <li><strong>Phone / Call</strong> — optional; place an emergency call directly.</li>
+                <li><strong>SMS</strong> — optional; send SOS texts automatically (else we open your SMS app pre-filled).</li>
+                <li><strong>Contacts</strong> — optional; pick a contact from your address book (or enter numbers manually).</li>
+              </ul>
+
+              <h3 style="margin:12px 0 6px 0;font-size:16px">How to install</h3>
+              <ol class="notice">
+                <li>Tap <strong>Download APK</strong> above.</li>
+                <li>Open the download and allow your browser to install “unknown apps” if prompted.</li>
+                <li>Tap <strong>Install</strong>.</li>
+              </ol>
+
+              <h3 style="margin:12px 0 6px 0;font-size:16px">Verify the download (optional)</h3>
+              <p class="notice">SHA-256: <code>339F7A6EF380825DEA54B3AED887EBD768B95CB2C9308653453C124E8AF1DADA</code></p>
+
+              <h3 style="margin:12px 0 6px 0;font-size:16px">What’s new</h3>
+              <ul class="notice"><li><strong>v1.0.0</strong> — Initial public release.</li></ul>
+
+              <h3 style="margin:12px 0 6px 0;font-size:16px">For parents & guardians</h3>
+              <p class="notice">Our apps are friendly but not recommended for users under 18. Please supervise any use by minors.</p>
+
+              <h3 style="margin:12px 0 6px 0;font-size:16px">Support</h3>
+              <p class="notice">Questions or feedback? Email <a href="mailto:apphub@yahoo.com">apphub@yahoo.com</a>.</p>
+
+              <p class="notice" style="margin-top:8px"><em>Safety note:</em> Rapid Now helps you contact someone quickly. It does not replace emergency services. If you are in immediate danger, call your local emergency number.</p>
+            </div>
+          </details>
         </article>
       </div>
 
-      <!-- COLLAPSIBLE for future apps.
-           HIDDEN for now. When you add a second app:
-           1) Remove the word 'hidden' from <details ...>
-           2) Paste a copy of the TEMPLATE CARD into the grid below and fill it.
-      -->
-      <details class="collapsible" id="more-apps" hidden>
-        <summary>Show more apps</summary>
-        <div class="grid" style="margin-top:12px">
-          <!-- ======================= TEMPLATE CARD (copy this block for each new app) =======================
-          <article class="card" id="newapp">
-            <div class="meta"><span>Android</span><span>v1.0.0</span></div>
-            <h3>New App Name</h3>
-            <p class="notice">Short one-line description of your app.</p>
-            <div style="display:flex; gap:8px; flex-wrap:wrap">
-              <a class="btn" href="./NewApp.apk" download>Download APK</a>
-              <a class="btn secondary" href="#newapp-details">Learn more</a>
-            </div>
-          </article>
-          ================================================================================================== -->
-        </div>
-      </details>
-
-      <div class="panel" role="note">
+      <div class="panel" role="note" style="margin-top:16px">
         <strong>Tip:</strong> Android may show “Install from unknown sources”. Enable once for your browser/installer, then install.
       </div>
-    </section>
-
-    <!-- RAPID NOW DETAILS -->
-    <section id="rapidnow" class="panel" aria-labelledby="rapidnow-title">
-      <h2 id="rapidnow-title" style="margin:0 0 8px 0">Rapid Now — Details</h2>
-      <p class="notice">Everything you need to know before installing.</p>
-
-      <h3 style="margin:16px 0 6px 0;font-size:16px">Overview</h3>
-      <ul class="notice">
-        <li><strong>Emergency first:</strong> Set one or more emergency contacts and trigger an SOS fast.</li>
-        <li><strong>One-tap actions:</strong> Place a call, send an SMS, or open WhatsApp to your contact with a pre-filled message.</li>
-        <li><strong>Live GPS (opt-in):</strong> When permitted, the app attaches your current coordinates to your SOS message (e.g., Google Maps link).</li>
-        <li><strong>Privacy:</strong> No ads, analytics, or third-party trackers. Your data stays on your device.</li>
-        <li><strong>Works offline:</strong> Calls/SMS work without internet; WhatsApp requires internet.</li>
-      </ul>
-
-      <h3 style="margin:16px 0 6px 0;font-size:16px">Key features</h3>
-      <ul class="notice">
-        <li>Save emergency contacts (manual number entry or pick from contacts).</li>
-        <li>Customizable SOS message templates.</li>
-        <li>Optional live GPS link in messages when location is allowed.</li>
-        <li>Big, high-contrast SOS button for quick access.</li>
-      </ul>
-
-      <h3 style="margin:16px 0 6px 0;font-size:16px">Permissions</h3>
-      <ul class="notice">
-        <li><strong>Location (precise GPS)</strong> — <em>optional</em>, attaches your coordinates to SOS messages. Not collected by us; no background tracking.</li>
-        <li><strong>Phone / Call</strong> — <em>optional</em>, to place an emergency call directly. If denied, the app opens the dialer with the number pre-filled.</li>
-        <li><strong>SMS</strong> — <em>optional</em>, to send SOS texts automatically. If denied, the app opens your SMS app with a pre-filled message for you to send.</li>
-        <li><strong>Contacts</strong> — <em>optional</em>, to pick a contact from your address book. You can also enter numbers manually.</li>
-        <li><strong>Notifications</strong> — <em>optional</em>, for confirmations/reminders you enable.</li>
-      </ul>
-
-      <h3 style="margin:16px 0 6px 0;font-size:16px">Sample SOS message</h3>
-      <p class="notice">"SOS from Rapid Now. I need your help. My location: https://maps.google.com/?q=&lt;lat&gt;,&lt;lng&gt;"</p>
-
-      <h3 style="margin:16px 0 6px 0;font-size:16px">Screenshots</h3>
-      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
-        <img src="assets/rapidnow-1.png?v=1" alt="Rapid Now screenshot 1" style="width:100%;border-radius:12px;border:1px solid #223047">
-        <img src="assets/rapidnow-2.png?v=1" alt="Rapid Now screenshot 2" style="width:100%;border-radius:12px;border:1px solid #223047">
-      </div>
-
-      <h3 style="margin:16px 0 6px 0;font-size:16px">Requirements</h3>
-      <ul class="notice"><li>Android 5.0+ (API 21 or higher)</li></ul>
-
-      <h3 style="margin:16px 0 6px 0;font-size:16px">How to install (APK)</h3>
-      <ol class="notice">
-        <li>Tap <strong>Download APK</strong> above.</li>
-        <li>Open the download. If prompted, allow your browser to install “unknown apps”.</li>
-        <li>Tap <strong>Install</strong>. Done!</li>
-      </ol>
-
-      <h3 style="margin:16px 0 6px 0;font-size:16px">Verify the download (optional)</h3>
-      <p class="notice">SHA-256: <code>339F7A6EF380825DEA54B3AED887EBD768B95CB2C9308653453C124E8AF1DADA</code></p>
-
-      <h3 style="margin:16px 0 6px 0;font-size:16px">What’s new</h3>
-      <ul class="notice"><li><strong>v1.0.0</strong> — Initial public release.</li></ul>
-
-      <h3 style="margin:16px 0 6px 0;font-size:16px">FAQ</h3>
-      <details><summary>Does Rapid Now track me?</summary><p class="notice">No. There are no ads, analytics, or third-party trackers. Permissions are optional and used only for features you enable.</p></details>
-      <details><summary>Why does it ask for location?</summary><p class="notice">Only if you start an SOS that includes GPS. You can deny it; the app still works (without location in the message).</p></details>
-      <details><summary>Can I delete my data?</summary><p class="notice">All app data lives on your device. Clear app data in system settings or uninstall to remove it.</p></details>
-
-      <h3 style="margin:16px 0 6px 0;font-size:16px">For parents & guardians</h3>
-      <p class="notice">Our apps are friendly but not recommended for users under 18. Please supervise any use by minors.</p>
-
-      <h3 style="margin:16px 0 6px 0;font-size:16px">Support</h3>
-      <p class="notice">Questions or feedback? Email <a href="mailto:apphub@yahoo.com">apphub@yahoo.com</a>.</p>
-
-      <p class="notice" style="margin-top:12px"><em>Safety note:</em> Rapid Now is a tool to help you contact someone quickly. It does not replace emergency services. If you are in immediate danger, call your local emergency number.</p>
     </section>
 
     <!-- PRIVACY POLICY -->
     <section id="privacy" class="panel" aria-labelledby="privacy-title">
       <h2 id="privacy-title" style="margin:0 0 8px 0">Privacy & Data Choices — App Hub</h2>
       <p class="notice" style="margin:0 0 10px 0">Last updated: August 19, 2025</p>
+
       <p><strong>Your choice. Your control.</strong> Our apps do not collect or monitor your personal data. There are no ads, analytics, or third-party trackers.</p>
 
       <h3 style="margin:16px 0 6px 0;font-size:16px">Location (GPS) — opt-in only</h3>
       <ul class="notice">
-        <li>Some features (like Rapid Now’s SOS) may request your <em>precise (GPS) location</em> only when you use that feature.</li>
+        <li>Some features (like Rapid Now’s SOS) may request your precise (GPS) location only when you use that feature.</li>
         <li>Granting location access is optional. You can deny it and the app will still function (without location features).</li>
         <li>We do not store your location on our servers or share it with third parties.</li>
         <li>No background tracking.</li>
@@ -202,14 +164,14 @@
 
       <h3 style="margin:16px 0 6px 0;font-size:16px">Other permissions</h3>
       <ul class="notice">
-        <li>Apps may ask for permissions strictly needed for core features (e.g., Phone/Call for direct calling; SMS for sending texts; Contacts for picking numbers; Notifications for alerts).</li>
+        <li>Apps may ask for permissions strictly needed for core features (e.g., Phone/Call; SMS; Contacts; Notifications).</li>
         <li>Permissions are requested at runtime and used only for the feature you enable.</li>
       </ul>
 
       <h3 style="margin:16px 0 6px 0;font-size:16px">What data we collect</h3>
       <ul class="notice">
         <li><strong>Website:</strong> We do not set cookies. Our host/CDN may keep brief server logs (IP, user-agent, requested URL) for security and reliability.</li>
-        <li><strong>Apps:</strong> By default, apps do not send us personal data. When you trigger an SOS, messages/calls are handled by your device (dialer/SMS/WhatsApp) and sent to your chosen contacts — not to us.</li>
+        <li><strong>Apps:</strong> By default, apps do not send us personal data. When you trigger an SOS, messages/calls are handled by your device and sent to your chosen contacts — not to us.</li>
         <li><strong>Support emails (optional):</strong> If you email us, we receive only what you send and use it solely to help you. We’ll delete it on request.</li>
       </ul>
 
@@ -217,7 +179,7 @@
       <ul class="notice"><li>App data lives on your device. Delete it anytime by clearing app data or uninstalling.</li></ul>
 
       <h3 style="margin:16px 0 6px 0;font-size:16px">Minors</h3>
-      <p class="notice">Our apps are friendly, but <strong>not recommended for users under 18</strong>. Parents/guardians should supervise any use by minors.</p>
+      <p class="notice">Our apps are friendly, but <strong>not recommended for users under 18</strong>. Parents/guardians should supervise any use by minors. We do not knowingly collect information from minors.</p>
 
       <h3 style="margin:16px 0 6px 0;font-size:16px">Third-party sharing</h3>
       <p class="notice">We do not sell or share your personal information with third parties. If an app integrates a third-party service in the future, we’ll disclose it here and in-app before you use that feature.</p>
@@ -242,6 +204,20 @@
     </div>
   </footer>
 
-  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // If user clicks the "Rapid Now" link in the header (/#rapidnow),
+    // auto-open the details block so info is visible.
+    function openDetailsFromHash() {
+      if (location.hash === '#rapidnow') {
+        const d = document.getElementById('rapidnow');
+        if (d && !d.open) d.open = true;
+      }
+    }
+    window.addEventListener('hashchange', openDetailsFromHash);
+    openDetailsFromHash();
+  </script>
 </body>
 </html>
