@@ -31,29 +31,21 @@
     footer { border-top:1px solid var(--border); margin-top:36px; padding:24px 0; color:var(--muted); font-size:14px }
     .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0 }
 
-    /* Collapsible “Learn more” styled like a button */
-    details.reveal { margin-top:14px; }
-    details.reveal > summary {
+    /* Collapsible buttons */
+    details.reveal, details.collapsible { margin-top:14px; }
+    details.reveal > summary, details.collapsible > summary {
       list-style:none; cursor:pointer; user-select:none;
       display:inline-flex; align-items:center; gap:8px;
       background:#111827; color:#e5e7eb; border:1px solid #2a3344;
       padding:10px 14px; border-radius:10px; font-weight:600;
     }
-    details.reveal > summary::-webkit-details-marker { display:none }
-    details.reveal[open] > summary::after { content:" (hide)"; font-weight:400; font-size:12px; color:var(--muted) }
-
-    /* Simple screenshots grid inside details */
-    .shots { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-top:8px }
-
-    /* Collapsible “More apps” (hidden until you add another app) */
-    details.collapsible { margin-top:16px; }
-    details.collapsible > summary {
-      list-style:none; user-select:none; display:inline-flex; align-items:center; gap:8px;
-      background:#111827; color:#e5e7eb; border:1px solid #2a3344; padding:10px 14px; border-radius:10px; font-weight:600
-    }
+    details.reveal > summary::-webkit-details-marker,
     details.collapsible > summary::-webkit-details-marker { display:none }
+    details.reveal[open] > summary::after { content:" (hide)"; font-weight:400; font-size:12px; color:var(--muted) }
     details.collapsible > summary::after { content:"▾"; font-size:12px }
     details.collapsible[open] > summary::after { content:"▴" }
+
+    .shots { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-top:8px }
   </style>
 </head>
 <body>
@@ -151,14 +143,11 @@
         </article>
       </div>
 
-      <!-- HIDDEN “More apps” area — enable when you add a 2nd app.
-           To enable: remove the word `hidden` from the <details> tag below,
-           then duplicate & edit the TEMPLATE CARD inside.
-      -->
+      <!-- HIDDEN “More apps” area — enable when you add a 2nd app -->
       <details class="collapsible" id="more-apps" hidden>
         <summary>Show more apps</summary>
         <div class="grid" style="margin-top:12px">
-          <!-- ======================= TEMPLATE CARD (copy for each new app) =======================
+          <!-- TEMPLATE CARD (copy for each new app)
           <article class="card" id="newapp">
             <div class="meta"><span>Android</span><span>v1.0.0</span></div>
             <h3>New App Name</h3>
@@ -167,28 +156,22 @@
               <a class="btn" href="./NewApp.apk" download>Download APK</a>
               <a class="btn secondary" href="#newapp-details">Learn more</a>
             </div>
-
             <details class="reveal" id="newapp-details">
               <summary>Learn more</summary>
               <div class="panel" style="margin-top:12px">
                 <h3 style="margin:10px 0 6px 0;font-size:16px">Overview</h3>
-                <ul class="notice">
-                  <li>What it does in one or two lines.</li>
-                  <li>Key features or unique benefit.</li>
-                </ul>
-
+                <ul class="notice"><li>What it does in one or two lines.</li><li>Key features or unique benefit.</li></ul>
                 <h3 style="margin:12px 0 6px 0;font-size:16px">Screenshots</h3>
                 <div class="shots">
                   <img src="assets/newapp-1.png" alt="New App screenshot 1" style="border-radius:12px;border:1px solid #223047">
                   <img src="assets/newapp-2.png" alt="New App screenshot 2" style="border-radius:12px;border:1px solid #223047">
                 </div>
-
                 <h3 style="margin:12px 0 6px 0;font-size:16px">How to install</h3>
                 <ol class="notice"><li>Tap Download APK.</li><li>Allow unknown apps if prompted.</li><li>Install.</li></ol>
               </div>
             </details>
           </article>
-          ================================================================================================== -->
+          -->
         </div>
       </details>
 
@@ -197,52 +180,56 @@
       </div>
     </section>
 
-    <!-- PRIVACY POLICY -->
-    <section id="privacy" class="panel" aria-labelledby="privacy-title">
-      <h2 id="privacy-title" style="margin:0 0 8px 0">Privacy & Data Choices — App Hub</h2>
-      <p class="notice" style="margin:0 0 10px 0">Last updated: August 19, 2025</p>
+    <!-- PRIVACY POLICY (hidden by default; opens when you click Privacy) -->
+    <section class="panel">
+      <details class="reveal" id="privacy">
+        <summary>Privacy & Data Choices — App Hub</summary>
+        <div style="margin-top:12px">
+          <p class="notice" style="margin:0 0 10px 0">Last updated: August 19, 2025</p>
 
-      <p><strong>Your choice. Your control.</strong> Our apps do not collect or monitor your personal data. There are no ads, analytics, or third-party trackers.</p>
+          <p><strong>Your choice. Your control.</strong> Our apps do not collect or monitor your personal data. There are no ads, analytics, or third-party trackers.</p>
 
-      <h3 style="margin:16px 0 6px 0;font-size:16px">Location (GPS) — opt-in only</h3>
-      <ul class="notice">
-        <li>Some features (like Rapid Now’s SOS) may request your precise (GPS) location only when you use that feature.</li>
-        <li>Granting location access is optional. You can deny it and the app will still function (without location features).</li>
-        <li>We do not store your location on our servers or share it with third parties.</li>
-        <li>No background tracking.</li>
-      </ul>
+          <h3 style="margin:16px 0 6px 0;font-size:16px">Location (GPS) — opt-in only</h3>
+          <ul class="notice">
+            <li>Some features (like Rapid Now’s SOS) may request your <em>precise (GPS) location</em> only when you use that feature.</li>
+            <li>Granting location access is optional. You can deny it and the app will still function (without location features).</li>
+            <li>We do not store your location on our servers or share it with third parties.</li>
+            <li>No background tracking.</li>
+          </ul>
 
-      <h3 style="margin:16px 0 6px 0;font-size:16px">Other permissions</h3>
-      <ul class="notice">
-        <li>Apps may ask for permissions strictly needed for core features (e.g., Phone/Call; SMS; Contacts; Notifications).</li>
-        <li>Permissions are requested at runtime and used only for the feature you enable.</li>
-      </ul>
+          <h3 style="margin:16px 0 6px 0;font-size:16px">Other permissions</h3>
+          <ul class="notice">
+            <li>Apps may ask for permissions strictly needed for core features (e.g., Phone/Call; SMS; Contacts; Notifications).</li>
+            <li>Permissions are requested at runtime and used only for the feature you enable.</li>
+          </ul>
 
-      <h3 style="margin:16px 0 6px 0;font-size:16px">What data we collect</h3>
-      <ul class="notice">
-        <li><strong>Website:</strong> We do not set cookies. Our host/CDN may keep brief server logs (IP, user-agent, requested URL) for security and reliability.</li>
-        <li><strong>Apps:</strong> By default, apps do not send us personal data. When you trigger an SOS, messages/calls are handled by your device and sent to your chosen contacts — not to us.</li>
-        <li><strong>Support emails (optional):</strong> If you email us, we receive only what you send and use it solely to help you. We’ll delete it on request.</li>
-      </ul>
+          <h3 style="margin:16px 0 6px 0;font-size:16px">What data we collect</h3>
+          <ul class="notice">
+            <li><strong>Website:</strong> We do not set cookies. Our host/CDN may keep brief server logs (IP, user-agent, requested URL) for security and reliability.</li>
+            <li><strong>Apps:</strong> By default, apps do not send us personal data. When you trigger an SOS, messages/calls are handled by your device and sent to your chosen contacts — not to us.</li>
+            <li><strong>Support emails (optional):</strong> If you email us, we receive only what you send and use it solely to help you. We’ll delete it on request.</li>
+          </ul>
 
-      <h3 style="margin:16px 0 6px 0;font-size:16px">Data storage & deletion</h3>
-      <ul class="notice"><li>App data lives on your device. Delete it anytime by clearing app data or uninstalling.</li></ul>
+          <h3 style="margin:16px 0 6px 0;font-size:16px">Data storage & deletion</h3>
+          <ul class="notice"><li>App data lives on your device. Delete it anytime by clearing app data or uninstalling.</li></ul>
 
-      <h3 style="margin:16px 0 6px 0;font-size:16px">Minors</h3>
-      <p class="notice">Our apps are friendly, but <strong>not recommended for users under 18</strong>. Parents/guardians should supervise any use by minors. We do not knowingly collect information from minors.</p>
+          <h3 style="margin:16px 0 6px 0;font-size:16px">Minors</h3>
+          <p class="notice">Our apps are friendly, but <strong>not recommended for users under 18</strong>. Parents/guardians should supervise any use by minors. We do not knowingly collect information from minors.</p>
 
-      <h3 style="margin:16px 0 6px 0;font-size:16px">Third-party sharing</h3>
-      <p class="notice">We do not sell or share your personal information with third parties. If an app integrates a third-party service in the future, we’ll disclose it here and in-app before you use that feature.</p>
+          <h3 style="margin:16px 0 6px 0;font-size:16px">Third-party sharing</h3>
+          <p class="notice">We do not sell or share your personal information with third parties. If an app integrates a third-party service in the future, we’ll disclose it here and in-app before you use that feature.</p>
 
-      <h3 style="margin:16px 0 6px 0;font-size:16px">Contact</h3>
-      <p class="notice">Questions or deletion requests? Email <a href="mailto:apphub@yahoo.com">apphub@yahoo.com</a>.</p>
+          <h3 style="margin:16px 0 6px 0;font-size:16px">Contact</h3>
+          <p class="notice">Questions or deletion requests? Email <a href="mailto:apphub@yahoo.com">apphub@yahoo.com</a>.</p>
 
-      <p class="notice" style="margin-top:12px"><em>Note:</em> This is a simple policy for a no-tracking site and apps; it is not legal advice.</p>
+          <p class="notice" style="margin-top:12px"><em>Note:</em> This is a simple policy for a no-tracking site and apps; it is not legal advice.</p>
+        </div>
+      </details>
     </section>
 
     <!-- CONTACT -->
     <section id="contact" class="panel" aria-labelledby="contact-title">
-      <h2 id="contact-title" style="margin:0 0 8px 0">Contact</h2>
+      <h2 id="contact-title" class="sr-only">Contact</h2>
       <p class="notice">Email: <a href="mailto:apphub@yahoo.com">apphub@yahoo.com</a></p>
     </section>
   </main>
@@ -258,12 +245,14 @@
     // Year
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // If someone opens /#rapidnow, auto-open the details block so info is visible.
+    // Auto-open a details block when its hash is used (#rapidnow or #privacy)
     function openDetailsFromHash() {
-      if (location.hash === '#rapidnow') {
-        const d = document.getElementById('rapidnow');
-        if (d && !d.open) d.open = true;
-      }
+      const id = location.hash.replace('#', '');
+      if (!id) return;
+      const d = document.getElementById(id);
+      if (d && d.tagName.toLowerCase() === 'details' && !d.open) d.open = true;
+      // Smoothly scroll the opened section into view
+      if (d) d.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     window.addEventListener('hashchange', openDetailsFromHash);
     openDetailsFromHash();
