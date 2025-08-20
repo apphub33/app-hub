@@ -95,8 +95,6 @@
     details.collapsible > summary::-webkit-details-marker{display:none}
     .chev{transition:transform .2s ease; display:inline-block}
     details[open] .chev{transform:rotate(180deg)}
-
-    /* Smooth content reveal */
     .reveal .content{overflow:hidden; max-height:0; transition:max-height .35s ease;}
     details.reveal[open] .content{max-height:1400px}
 
@@ -108,13 +106,15 @@
     footer{border-top:1px solid var(--border);margin-top:36px;padding:24px 0;color:var(--muted);font-size:14px}
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
 
-    /* ---------- Download counter badge ---------- */
+    /* ---------- Badges ---------- */
+    .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
     .badge{
       display:inline-flex; align-items:center; gap:6px;
       background:#0f172a; color:#e5e7eb; border:1px solid #223047;
-      padding:6px 10px; border-radius:999px; font-size:12px; margin-top:8px
+      padding:6px 10px; border-radius:999px; font-size:12px
     }
     .badge dot{width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block}
+    .badge.muted{opacity:.9;background:#0b1220}
   </style>
 </head>
 <body>
@@ -156,10 +156,18 @@
           <p class="notice">One-tap SOS: call, SMS, or WhatsApp your emergency contact with live GPS (only if you allow it).</p>
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
             <!-- KEEP: your working download link -->
-            <a class="btn" href="./RapidNow.apk?v=1" download>Download APK</a>
+            <a class="btn" id="download-rapidnow" href="./RapidNow.apk?v=1" download>Download APK</a>
           </div>
-          <!-- Live download counter (reads GitHub Release asset count) -->
-          <div class="badge" aria-live="polite"><dot></dot> Downloads: <span id="dl-count">—</span></div>
+
+          <!-- Counters -->
+          <div class="badges" aria-live="polite">
+            <div class="badge" title="Increments when you tap Download">
+              <dot></dot> Downloads (this site): <span id="dl-count">—</span>
+            </div>
+            <div class="badge muted" title="Total downloads of the Release asset on GitHub">
+              <dot></dot> GitHub downloads: <span id="gh-count">—</span>
+            </div>
+          </div>
 
           <!-- Learn more -->
           <details class="reveal" id="rapidnow" style="margin-top:12px">
@@ -241,6 +249,8 @@
               <li><strong>Website:</strong> No cookies. Our host may keep short server logs for reliability/security.</li>
               <li><strong>Apps:</strong> Messages and calls go from your device to your contacts — not to us.</li>
               <li><strong>Email support:</strong> We keep only what you send us; delete on request.</li>
+              <li><strong>Anonymous counter:</strong> This site uses a simple public counter (<code>countapi.xyz</code>) to increase a download number when you tap “Download”. It does not identify you or set cookies.</li>
+              <li><strong>GitHub stats:</strong> We also read public download totals from GitHub Releases via GitHub’s public API.</li>
             </ul>
 
             <h3 style="margin:16px 0 6px 0;font-size:16px">Minors</h3>
@@ -284,25 +294,74 @@
     window.addEventListener('hashchange', openDetailsFromHash);
     openDetailsFromHash();
 
-    // ---- Download counter: reads GitHub Releases asset count ----
+    // ---- Tap counter using CountAPI (no signup) ----
+    (function () {
+      const NAMESPACE = "apphub33-app-hub";
+      const KEY       = "rapidnow-downloads";
+      const COUNT_GET = `https://api.countapi.xyz/get/${NAMESPACE}/${KEY}`;
+      const COUNT_HIT = `https://api.countapi.xyz/hit/${NAMESPACE}/${KEY}`;
+      const COUNT_CREATE = `https://api.countapi.xyz/create?namespace=${encodeURIComponent(NAMESPACE)}&key=${encodeURIComponent(KEY)}&value=0`;
+
+      const countEl = document.getElementById("dl-count");
+      const btn     = document.getElementById("download-rapidnow");
+
+      async function initCount() {
+        try {
+          let res = await fetch(COUNT_GET, { cache: "no-store" });
+          if (!res.ok) {
+            res = await fetch(COUNT_CREATE, { method: "GET" });
+          }
+          const data = await res.json();
+          if (countEl && typeof data.value === "number") {
+            countEl.textContent = data.value.toLocaleString();
+          }
+        } catch (e) { /* leave as "—" */ }
+      }
+
+      function wireClick() {
+        if (!btn) return;
+        btn.addEventListener("click", function () {
+          fetch(COUNT_HIT).then(r => r.json()).then(data => {
+            if (countEl && typeof data.value === "number") {
+              countEl.textContent = data.value.toLocaleString();
+            }
+          }).catch(()=>{ /* ignore */ });
+        }, { passive: true });
+      }
+
+      initCount();
+      wireClick();
+    })();
+
+    // ---- GitHub Releases download total (sum across all releases) ----
     (async function () {
       const owner = "apphub33";
       const repo  = "app-hub";
       const assetName = "RapidNow.apk";
+      const el = document.getElementById("gh-count");
+      if (!el) return;
+
       try {
-        const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases/latest`, {
-          headers: { "Accept": "application/vnd.github+json" }
-        });
-        if (!res.ok) throw new Error("GitHub API error");
-        const data = await res.json();
-        const asset = (data.assets || []).find(a => a.name === assetName);
-        if (asset && typeof asset.download_count === "number") {
-          const el = document.getElementById("dl-count");
-          if (el) el.textContent = asset.download_count.toLocaleString();
+        let page = 1, total = 0, more = true;
+        while (more) {
+          const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/releases?per_page=50&page=${page}`, {
+            headers: { "Accept": "application/vnd.github+json" }
+          });
+          if (!res.ok) throw new Error("GitHub API error");
+          const data = await res.json();
+          if (!Array.isArray(data) || data.length === 0) break;
+          for (const rel of data) {
+            for (const a of (rel.assets || [])) {
+              if (a.name === assetName && typeof a.download_count === "number") {
+                total += a.download_count;
+              }
+            }
+          }
+          more = data.length === 50;
+          page += 1;
         }
-      } catch (e) {
-        // If no release yet or API blocked, keep the badge as "—"
-      }
+        el.textContent = total.toLocaleString();
+      } catch (e) { /* leave as "—" */ }
     })();
   </script>
 </body>
