@@ -1,7 +1,7 @@
 {
   "app": "TankSmart",
-  "versionCode": 7,
-  "versionName": "1.0.4",
+  "versionCode": 8,
+  "versionName": "1.0.5",
   "apkUrl": "https://apphub33.github.io/app-hub/TankSmart.apk",
   "notes": "Initial TankSmart release."
 }
